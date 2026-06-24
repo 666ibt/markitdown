@@ -63,8 +63,21 @@ def load_people() -> list[dict]:
         return json.load(f)
 
 
+def save_people(people: list[dict]) -> None:
+    with open(PEOPLE_PATH, "w", encoding="utf-8") as f:
+        json.dump(people, f, ensure_ascii=False, indent=2)
+        f.write("\n")
+
+
 def pick_person(people: list[dict]) -> dict:
     return random.choice(people)
+
+
+def remove_person(people: list[dict], person: dict) -> None:
+    """Drop the picked person from the list and persist it, so they are
+    never selected again."""
+    people.remove(person)
+    save_people(people)
 
 
 def extract_json(text: str) -> dict:
@@ -170,7 +183,10 @@ def main() -> None:
     doc = build_document(data)
     path = save_document(doc, data)
 
+    remove_person(people, person)
+
     print(f"Saved brief to: {path}")
+    print(f"Removed {person['name']} from the list ({len(people)} remaining).")
 
 
 if __name__ == "__main__":
