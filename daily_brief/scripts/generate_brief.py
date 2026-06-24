@@ -38,24 +38,28 @@ articles over generic web pages.
 - Cross-check key facts and quotes across at least two independent sources \
 when possible.
 
+IMPORTANT: All text values in your response must be written in RUSSIAN \
+(person_name, short_description, intro, key_points, quote explanations, and \
+the quotes themselves translated into Russian where the original is not Russian).
+
 After researching, respond with ONLY a single JSON object - no markdown code \
 fences, no commentary before or after - matching exactly this schema:
 
 {{
-  "person_name": "Full name as commonly known",
-  "short_description": "1-3 word descriptor for a filename, e.g. 'Stoic Philosopher'",
-  "lifespan": "e.g. 121-180 AD, or empty string if not applicable",
-  "intro": "A 3-5 paragraph biographical introduction (who they are, when/where \
-they lived, why they matter), as plain text paragraphs separated by a blank line.",
-  "key_points": ["5-8 strings, each one major achievement or key idea from their work"],
+  "person_name": "Полное имя, под которым человек широко известен (на русском)",
+  "short_description": "Краткое описание из 1-3 слов для имени файла, напр. 'Философ-стоик'",
+  "lifespan": "напр. 121-180 гг. н.э., или пустая строка, если неприменимо",
+  "intro": "Биографическое введение из 3-5 абзацев (кто это, когда и где жил, \
+почему важен), обычным текстом, абзацы разделены пустой строкой. На русском языке.",
+  "key_points": ["5-8 строк, каждая - крупное достижение или ключевая идея из его работы. На русском языке."],
   "quotes": [
-    {{"quote": "An authentic quote attributed to them", "explanation": "1-3 \
-sentences explaining what the quote means and why it matters"}}
+    {{"quote": "Подлинная цитата, приписываемая этому человеку (на русском)", \
+"explanation": "1-3 предложения, объясняющие смысл цитаты и почему она важна. На русском языке."}}
   ]
 }}
 
 Include between 3 and 5 entries in "quotes". Make sure every quote is genuinely \
-attributable to {name} based on your research."""
+attributable to {name} based on your research. Remember: every text value MUST be in Russian."""
 
 
 def load_people() -> list[dict]:
@@ -137,19 +141,19 @@ def build_document(data: dict) -> Document:
         subtitle_text += f"  ({data['lifespan']})"
     doc.paragraphs[1].runs[0].text = subtitle_text
 
-    doc.add_heading("Who They Are", level=1)
+    doc.add_heading("Кто это", level=1)
     for paragraph in data["intro"].split("\n\n"):
         paragraph = paragraph.strip()
         if paragraph:
             doc.add_paragraph(paragraph)
 
     doc.add_page_break()
-    doc.add_heading("Achievements & Key Ideas", level=1)
+    doc.add_heading("Достижения и ключевые идеи", level=1)
     for point in data["key_points"]:
         doc.add_paragraph(point, style="List Bullet")
 
     doc.add_page_break()
-    doc.add_heading("Quotes", level=1)
+    doc.add_heading("Цитаты", level=1)
     for item in data["quotes"]:
         doc.add_paragraph(f"“{item['quote']}”", style="Quote")
         doc.add_paragraph(item["explanation"], style="Quote Explanation")
